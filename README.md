@@ -1,4 +1,4 @@
-# Generated with perplexity.ai (https://www.perplexity.ai/)
+Generated with perplexity.ai (https://www.perplexity.ai/)
 
 # MIT 6.0001 - Introduction to Computer Science and Programming in Python (Fall 2016) - Problem Sets
 
