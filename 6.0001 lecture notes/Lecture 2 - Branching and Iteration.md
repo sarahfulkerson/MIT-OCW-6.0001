@@ -1,0 +1,37 @@
+- Strings
+	- **sequences of characters** - letters, special chars, spaces, digits
+	- enclosed in quotation marks or single quotes
+	- you can concat strings to make new ones
+	- you can use the star (\*) operator to concat strings multiple times
+	- using ',' in `print()` will automatically add spaces between strings
+- Input/Output
+	- `input("")` will print whatever is inside the quotes
+	- user types in something and hits enter
+	- Assignment can be used to bind that value to a variable
+		- ex. `text = input("Type anything... ")`
+	- `input()` gives you a string so you must cast the input if working with numbers
+- Comparison operators on `int`, `float`, `string`
+	- `>`, `>=`, `<`, and `<=` all compare strings lexographically
+	- `==` (equality test), `!=` (inequality test)
+- Comparison operators on Booleans
+	- `not a` -> `True` if `a` is `False`, `False` if `a` is `False`
+	- `a and b` -> `True` if both are `True`
+	- `a or b` -> `True` if either or both are `True`
+- Control flow: `if/elif/else`
+	- `if` -> check the condition, eval to `True` or `False` , execute specific instructions if `True`
+	- `if/else` -> if condition is `False`, execute the instructions in the code block under `else`
+	- `if/elif/else` -> if the `if` condition is `False`, eval the next `elif` condition iteratively until a condition evals to `True`, otherwise execute the code block under `else`
+		- will only ever enter 1 of these code blocks and it will be the first one that evals to `True`
+- Indentation matters in python because it is how you denote blocks of code
+- Control flow: `while` loops
+	- while a condition is `True`, perform these expressions
+	- used when you don't know how many times a user will want or need to do something
+	- `ctrl + c` breaks out of infinite `while` loops
+- Control flow: `for` loops
+	- example format: `for <variable> in range (<some_num>): <expression>` 
+	- each time thru loop, `<variable>` takes a value; first time starts at the smallest value, next time gets the prev value +1, etc.
+	- `range(start, stop, step)`
+		- default values are '0' for `start` and '1' for `step`
+		- must be of type `int`
+		- value of `stop` is never reached, so `range(7,10)` will iterate on 7, 8, and 9
+- the `break` statement immediately exits whatever loop it is in and skips remaining expressions in the code block

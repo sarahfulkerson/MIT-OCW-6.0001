@@ -1,0 +1,80 @@
+- Types of knowledge:
+	- Declarative knowledge - statements of fact
+	- imperative knowledge - a recipe or "how to" for the computer to follow
+- What is a recipe?
+	1. A sequence of simple steps
+	2. flow of control process that specifies when each step is executed
+	3. a means of determining when to stop
+	- 1+2+3 = an algorithm!
+- How to capture a recipe in a mechanical process?
+	- **fixed program computer**: ex. a handheld calculator, older computers - it can only do 1 thing, if you need it to do tasks other than math operations you can't and need to build a new machine
+	- **stored program computer**: ex. all modern computers. a machine that stores and executes instructions
+- Basic machine architecture for stored program computer
+	- 1. Memory
+		- contains data, sequence of instructions
+		- instructions are built from predefined set of primitive instructions
+			- arithmetic and logic
+			- simple tests
+			- move data around
+	- 2. control unit
+		- contains a program counter - starts with the first sequence/instruction and sends it to the ALU
+		- decides which instruction to execute next
+	- 3. arithmetic logic unit (ALU)
+		- does primitive operations
+		- once its done we iterate until all instructions are done
+	- input/output
+-  Basic primitives
+	- Alan Turing showed that anything can be computed using 6 primitives: move left, move right, read, write, scan, do nothing
+	- modern programming languages give you a more convenient set of primitives to use, also let you create new ones
+	- anything computable in one language is computable in any other programming language
+- Creating recipes
+	- programing languages give you a set of primitive **operations**
+	- **expressions** are complex but valid combinations of primitives in a programming language
+	- expressions and computations have **values** and meanings in a programming language
+- Aspects of languages
+	- valid **syntax**
+		- "hi"5 --> bad python syntax
+		- 3.2\*5 --> good python syntax
+	- **static semantics** - which syntactically valid strings have meaning?
+		- "I are hungry" --> sytactically valid but static semantic error
+		- 3.2\*5 --> syntactically valid
+		- 3.2+"hi" --> static semantic error
+	- **semantics**: the meaning associated with a syntactically correct string of symbols with no static semantic errors
+		- English can have many meanings "Flying planes can be dangerous"
+		- Programming languages will always have one meaning, but may not be what you intended it to do
+- Where things go wrong
+	- **syntactic errors** - common and easily caught
+	- **static semantic errors** - some languages check for these before running program, can cause unpredictable behavior
+	- no semantic errors but **different meaning than what programmer intended** - program crashes, stops running, runs forever, gives an answer but different than expected
+- Python programs
+	- **program** - a sequence of definitions and commands
+		- definitions are **evaluated**, commands are **executed** by python interpreter in a shell
+	- **commands** - instruct interpreter to do something
+	- can be typed directly in a **shell** or stored in a **file** that is read into the shell and evaluated
+- Objects
+	- everything in python is an object
+	- programs manipulate **data objects**
+	- objects have a **type** that defines the kinds of things programs can do to them
+	- objects are either:
+		- **scalar** - cannot be subdivided, ex. the number 5
+		- **non-scalar** - have internal structure that can be accessed, ex. a list of numbers
+- Scalar objects (in python)
+	- int - represents **integers**, ex. 5
+	- float - represents **real numbers**, ex. 3.27
+	- bool - represents Boolean values True and False
+	- NoneType - **special** and has one value of None
+	- type() reveals the type of an object, ex. type(5) returns int
+	- you can convert objects in python from one type to another
+- need "print" to show output from code to a user in the console
+- Expressions
+	- expressions are made from **combining objects and operators** and will always resolve to a **value** which has a **type**
+	- syntax for an expression is always: `<object> <operator> <object>`
+	- operators on ints and floats are sum, difference, product, division, remainder, and power
+		- mixed typing in sum/difference/product will result in a float
+		- division always results in float no matter the typing
+- Binding variables and values
+	- the equal sign is an **assignment** of a value to a variable name
+	- the value is stored in computer memory and the assignment binds a name to a value
+	- names allow you to reuse the name instead of the value, makes it easier to change code later
+- Programming vs math: in programming, you do not "solve for X" - you can only have one thing to the left of the equal sign (an assignment)
+- You can **rebind** variable names using new assignment statements - unused values will be stored in memory until garbage collected
