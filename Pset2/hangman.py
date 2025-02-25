@@ -142,47 +142,46 @@ def hangman(secret_word):
     print("You have been given " + str(warnings) + " warnings. Play by the rules!")
 
     while guesses > 0:
-        print("\nYou have " + str(guesses) + " guesses remaining.")
-        print("Available letters: " + get_available_letters(letters_guessed) + "\n")
+        print("You have " + str(guesses) + " guesses remaining.")
+        print("Available letters: " + get_available_letters(letters_guessed) + "")
         
         guess = input("Enter a letter: ").lower()
+        guessed_word = get_guessed_word(secret_word, letters_guessed)
         
         # check that guess is a single character
         if len(guess) != 1:
-            print(get_guessed_word(secret_word, letters_guessed))
-            print("\nGuess must be a single character.")
+            print("Guess must be a single character!: " + guessed_word)
             print(breaker)
             continue
         
         # check that guess is a letter of the alphabet
         if guess not in alphabet:
-            print(get_guessed_word(secret_word, letters_guessed))
             if warnings != 0:
                 warnings -= 1
             else:
                 guesses -=1
-            print("\nInvalid guess. " + str(warnings) + " warnings remaining.")
+            print("Invalid guess. " + str(warnings) + " warnings remaining: " + guessed_word)
             print(breaker)
             continue
         
         # check if the valid guess has already been guessed
         if guess in letters_guessed:
-            print(get_guessed_word(secret_word, letters_guessed))
             if warnings != 0:
                 warnings -= 1
             else:
                 guesses -= 1
-            print("\nAlready guessed that letter! " + str(warnings) + " warnings remaining.")
+            print("Already guessed that letter! " + str(warnings) + " warnings remaining: " + guessed_word)
             print(breaker)
             continue
         
         # add new, valid guess to letters guessed and show word in progress
         letters_guessed += guess
-        print(get_guessed_word(secret_word, letters_guessed))
+        # update value of guessed_word with new value in letters_guessed
+        guessed_word = get_guessed_word(secret_word, letters_guessed)
         
         # remove a guess if it isn't in secret word
         if guess not in secret_word and guesses != 0:
-            print("\nNot in secret word!")
+            print("Not in secret word!: " + guessed_word)
             
             if guess in 'aeiou':
                 guesses -= 2
@@ -191,11 +190,12 @@ def hangman(secret_word):
             
             print(breaker)
             continue
-    
-    
+        elif guess in secret_word and guesses != 0:
+            print("Good guess!: " + guessed_word)
+
         # break out of the game if user has guessed the word
         if is_word_guessed(secret_word, letters_guessed):
-            print("\nYou won!!")
+            print("You won!!")
             
             score = guesses * len(letters_guessed)
             print("Score: " + str(score))
@@ -206,7 +206,7 @@ def hangman(secret_word):
         
     # if the user didn't guess the word, let them know the game has ended
     if guesses <= 0:
-        print("\nSecret word was " + secret_word + ", better luck next time!")
+        print("Secret word was " + secret_word + ", better luck next time!")
     
 
 # When you've completed your hangman function, scroll down to the bottom
@@ -293,7 +293,7 @@ if __name__ == "__main__":
     # uncomment the following two lines.
     
     secret_word = choose_word(wordlist)
-    hangman("dolphin")
+    hangman(secret_word)
 
 ###############
     
