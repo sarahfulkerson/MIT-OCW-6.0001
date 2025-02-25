@@ -228,10 +228,33 @@ def match_with_gaps(my_word, other_word):
         _ , and my_word and other_word are of the same length;
         False otherwise: 
     '''
-    # FILL IN YOUR CODE HERE AND DELETE "pass"
-    pass
-
-
+    # my_word should always be structured as a character + whitespace, so the length of my_word should always be equal to double the length of other_word
+    # returns False when other_word is of an improper length because it therefore cannot be the same as my_word
+    if len(my_word) != len(other_word)*2:
+        return False
+    
+    # strip whitespace out of my_word, save as my_word_stripped
+    # save unique alphabetic chars of my_word to my_word_chars
+    my_word_stripped = ''
+    my_word_chars = ''
+    for char in my_word:
+        if char not in string.whitespace:
+            my_word_stripped += char
+            if char not in my_word_chars and char in string.ascii_lowercase:
+                my_word_chars += char
+    
+    # iterate over my_word_stripped looking for invalid chars
+    for i in range(len(my_word_stripped)):
+        # return False if a guessed letter in my_word_stripped does not match the corresponding letter of other_word
+        if my_word_stripped[i] != '_' and my_word_stripped[i] != other_word[i]:
+            return False
+        
+        # hidden letters cannot be one of the letters that has already been revealed - returns False in this case
+        if my_word_stripped[i] == '_' and other_word[i] in my_word_chars:
+            return False
+    
+    # no invalid chars found - return True
+    return True
 
 def show_possible_matches(my_word):
     '''
@@ -243,10 +266,18 @@ def show_possible_matches(my_word):
              that has already been revealed.
 
     '''
-    # FILL IN YOUR CODE HERE AND DELETE "pass"
-    pass
-
-
+    show_possible_matches = ''
+    
+    # if match_with_gaps returns True while comparing a word from wordlist with my_word, append word to show_possible_matches
+    for word in wordlist:
+        if match_with_gaps(my_word, word):
+            show_possible_matches += word + ' '
+    
+    # check if show_possible_matches has found any matches to choose what to return
+    if show_possible_matches == '':
+        return "No matches found"
+    else:
+        return show_possible_matches
 
 def hangman_with_hints(secret_word):
     '''
@@ -275,10 +306,87 @@ def hangman_with_hints(secret_word):
     
     Follows the other limitations detailed in the problem write-up.
     '''
-    # FILL IN YOUR CODE HERE AND DELETE "pass"
-    pass
+    guesses = 6
+    warnings = 3
+    alphabet = string.ascii_lowercase
+    letters_guessed = ''
+    breaker = "-------------------"
+    
+    print("\nSecret word contains " + str(len(secret_word)) + " letters.")
+    print("You have been given " + str(warnings) + " warnings. Play by the rules!")
 
+    while guesses > 0:
+        print("You have " + str(guesses) + " guesses remaining.")
+        print("Available letters: " + get_available_letters(letters_guessed) + "")
+        
+        guess = input("Enter a letter: ").lower()
+        guessed_word = get_guessed_word(secret_word, letters_guessed)
+        
+        # check that guess is a single character
+        if len(guess) != 1:
+            print("Guess must be a single character!: " + guessed_word)
+            print(breaker)
+            continue
+        
+        # check if the user wants a hint
+        if guess == '*':
+            print("Possible word matches are: \n" + show_possible_matches(guessed_word))
+            print(breaker)
+            continue
+        
+        # check that guess is a letter of the alphabet
+        if guess not in alphabet:
+            if warnings != 0:
+                warnings -= 1
+            else:
+                guesses -=1
+            print("Invalid guess. " + str(warnings) + " warnings remaining: " + guessed_word)
+            print(breaker)
+            continue
+        
+        # check if the valid guess has already been guessed
+        if guess in letters_guessed:
+            if warnings != 0:
+                warnings -= 1
+            else:
+                guesses -= 1
+            print("Already guessed that letter! " + str(warnings) + " warnings remaining: " + guessed_word)
+            print(breaker)
+            continue
+        
+        # add new, valid guess to letters guessed and show word in progress
+        letters_guessed += guess
+        # update value of guessed_word with new value in letters_guessed
+        guessed_word = get_guessed_word(secret_word, letters_guessed)
+        
+        # remove a guess if it isn't in secret word
+        if guess not in secret_word and guesses != 0:
+            print("Not in secret word!: " + guessed_word)
+            
+            if guess in 'aeiou':
+                guesses -= 2
+            else:
+                guesses -= 1
+            
+            print(breaker)
+            continue
+        elif guess in secret_word and guesses != 0:
+            print("Good guess!: " + guessed_word)
 
+        # break out of the game if user has guessed the word
+        if is_word_guessed(secret_word, letters_guessed):
+            print("You won!!")
+            
+            score = guesses * len(letters_guessed)
+            print("Score: " + str(score))
+            print(breaker)
+            break
+        
+        print(breaker)
+        
+    # if the user didn't guess the word, let them know the game has ended
+    if guesses <= 0:
+        print("Secret word was " + secret_word + ", better luck next time!")
 
 # When you've completed your hangman_with_hint function, comment the two similar
 # lines above that were used to run the hangman function, and then uncomment
@@ -292,13 +400,24 @@ if __name__ == "__main__":
     # To test part 2, comment out the pass line above and
     # uncomment the following two lines.
     
-    secret_word = choose_word(wordlist)
-    hangman(secret_word)
+    # secret_word = choose_word(wordlist)
+    # hangman(secret_word)
 
 ###############
     
     # To test part 3 re-comment out the above lines and 
     # uncomment the following two lines. 
     
-    #secret_word = choose_word(wordlist)
-    #hangman_with_hints(secret_word)
+    secret_word = choose_word(wordlist)
+    hangman_with_hints(secret_word)
+
+    # test cases for match_with_gaps
+    # print(match_with_gaps("t e _ t ", "tact")) # should return False
+    # print(match_with_gaps("a _ _ l e ", "banana")) # should return False
+    # print(match_with_gaps("a _ p l e ", "apple")) # should return False
+    # print(match_with_gaps("a _ _ l e ", "apple")) # should return True
+
+    # test cases for show_possible_matches
+    # print(show_possible_matches("t _ _ t "))
+    # print(show_possible_matches("a b b b b _ "))
+    # print(show_possible_matches("a _ p l _ "))
