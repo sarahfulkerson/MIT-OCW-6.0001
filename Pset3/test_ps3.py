@@ -110,14 +110,14 @@ def test_is_valid_word(word_list):
     handCopy = handOrig.copy()
 
     if not is_valid_word(word, handCopy, word_list):
-        print("FAILURE: test_is_valid_word()")
+        print("1FAILURE: test_is_valid_word()")
         print("\tExpected True, but got False for word: '" + word + "' and hand:", handOrig)
 
         failure = True
 
     # Test a second time to see if word_list or hand has been modified
     if not is_valid_word(word, handCopy, word_list):
-        print("FAILURE: test_is_valid_word()")
+        print("2FAILURE: test_is_valid_word()")
 
         if handCopy != handOrig:
             print("\tTesting word", word, "for a second time - be sure you're not modifying hand.")
@@ -138,7 +138,7 @@ def test_is_valid_word(word_list):
     word = "Rapture"
 
     if  is_valid_word(word, hand, word_list):
-        print("FAILURE: test_is_valid_word()")
+        print("3FAILURE: test_is_valid_word()")
         print("\tExpected False, but got True for word: '" + word + "' and hand:", hand)
 
         failure = True        
@@ -148,7 +148,7 @@ def test_is_valid_word(word_list):
     word = "honey"
 
     if  not is_valid_word(word, hand, word_list):
-        print("FAILURE: test_is_valid_word()")
+        print("4FAILURE: test_is_valid_word()")
         print("\tExpected True, but got False for word: '"+ word +"' and hand:", hand)
 
         failure = True                        
@@ -158,7 +158,7 @@ def test_is_valid_word(word_list):
     word = "honey"
 
     if  is_valid_word(word, hand, word_list):
-        print("FAILURE: test_is_valid_word()")
+        print("5FAILURE: test_is_valid_word()")
         print("\tExpected False, but got True for word: '" + word + "' and hand:", hand)
         
         failure = True
@@ -168,7 +168,7 @@ def test_is_valid_word(word_list):
     word = "EVIL"
     
     if  not is_valid_word(word, hand, word_list):
-        print("FAILURE: test_is_valid_word()")
+        print("6FAILURE: test_is_valid_word()")
         print("\tExpected True, but got False for word: '" + word + "' and hand:", hand)
         
         failure = True
@@ -177,7 +177,7 @@ def test_is_valid_word(word_list):
     word = "Even"
 
     if  is_valid_word(word, hand, word_list):
-        print("FAILURE: test_is_valid_word()")
+        print("7FAILURE: test_is_valid_word()")
         print("\tExpected False, but got True for word: '" + word + "' and hand:", hand)
         print("\t(If this is the only failure, make sure is_valid_word() isn't mutating its inputs)")        
         

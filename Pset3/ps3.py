@@ -179,8 +179,16 @@ def update_hand(hand, word):
     hand: dictionary (string -> int)    
     returns: dictionary (string -> int)
     """
+    new_hand = hand.copy()
+    for char in word.lower():
+        if new_hand.get(char) == None:
+            continue
+        elif new_hand.get(char) > 0:
+            new_hand[char] -= 1
+        else:
+            new_hand.pop(char)
 
-    pass  # TO DO... Remove this line when you implement this function
+    return new_hand
 
 #
 # Problem #3: Test word validity
@@ -196,8 +204,22 @@ def is_valid_word(word, hand, word_list):
     word_list: list of lowercase strings
     returns: boolean
     """
+    # check if word is in the word_list - if not, return False
+    if word.lower() not in word_list:
+        return False
+    
+    # check if word can be made from letters in the hand
+    word_dict = get_frequency_dict(word.lower())
+    for letter in word_dict:
+        # if a letter in word_dict is not present in hand, then it cannot be a valid word
+        if hand.get(letter) == None:
+            return False
+        # if there are fewer letters in the hand than there are in the word_dict, it cannot be a valid word
+        if hand.get(letter) < word_dict.get(letter):
+            return False
 
-    pass  # TO DO... Remove this line when you implement this function
+    # no issues found, return True
+    return True
 
 #
 # Problem #5: Playing a hand
@@ -355,3 +377,8 @@ def play_game(word_list):
 if __name__ == '__main__':
     word_list = load_words()
     play_game(word_list)
+
+    hand = {'e':1, 'v':2, 'n':1, 'i':1, 'l':2}
+    word = "EVIL"
+
+    print(is_valid_word(word,hand,word_list))
