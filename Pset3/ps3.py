@@ -11,12 +11,13 @@ import math
 import random
 import string
 
-VOWELS = 'aeiou'
+VOWELS = 'aeiou*'
 CONSONANTS = 'bcdfghjklmnpqrstvwxyz'
 HAND_SIZE = 7
 
+# modified SCRABBLE_LETTER_VALUES to include wildcard with a value of '0'
 SCRABBLE_LETTER_VALUES = {
-    'a': 1, 'b': 3, 'c': 3, 'd': 2, 'e': 1, 'f': 4, 'g': 2, 'h': 4, 'i': 1, 'j': 8, 'k': 5, 'l': 1, 'm': 3, 'n': 1, 'o': 1, 'p': 3, 'q': 10, 'r': 1, 's': 1, 't': 1, 'u': 1, 'v': 4, 'w': 4, 'x': 8, 'y': 4, 'z': 10
+    '*': 0, 'a': 1, 'b': 3, 'c': 3, 'd': 2, 'e': 1, 'f': 4, 'g': 2, 'h': 4, 'i': 1, 'j': 8, 'k': 5, 'l': 1, 'm': 3, 'n': 1, 'o': 1, 'p': 3, 'q': 10, 'r': 1, 's': 1, 't': 1, 'u': 1, 'v': 4, 'w': 4, 'x': 8, 'y': 4, 'z': 10
 }
 
 # -----------------------------------
@@ -58,11 +59,8 @@ def get_frequency_dict(sequence):
     for x in sequence:
         freq[x] = freq.get(x,0) + 1
     return freq
-	
-
 # (end of helper code)
 # -----------------------------------
-
 #
 # Problem #1: Scoring a word
 #
@@ -126,7 +124,6 @@ def display_hand(hand):
         for j in range(hand[letter]):
              print(letter, end=' ')      # print all on the same line
     print()                              # print an empty line
-
 #
 # Make sure you understand how this function works and what it does!
 # You will need to modify this for Problem #4.
@@ -144,20 +141,21 @@ def deal_hand(n):
     n: int >= 0
     returns: dictionary (string -> int)
     """
-    
-    hand={}
-    num_vowels = int(math.ceil(n / 3))
+    # modified to subtract 1 from the vowel count and replace it as a wildcard
+    hand={'*':1}
+    num_vowels = int(math.ceil(n / 3)) - 1
 
+    # add vowels to hand
     for i in range(num_vowels):
-        x = random.choice(VOWELS)
+        x = random.choice(VOWELS[:-1]) # modified to never select the wildcard at random
         hand[x] = hand.get(x, 0) + 1
     
+    # add consonants to hand
     for i in range(num_vowels, n):    
         x = random.choice(CONSONANTS)
         hand[x] = hand.get(x, 0) + 1
     
     return hand
-
 #
 # Problem #2: Update a hand by removing letters
 #
@@ -189,7 +187,6 @@ def update_hand(hand, word):
             new_hand.pop(char)
 
     return new_hand
-
 #
 # Problem #3: Test word validity
 #
@@ -204,12 +201,30 @@ def is_valid_word(word, hand, word_list):
     word_list: list of lowercase strings
     returns: boolean
     """
-    # check if word is in the word_list - if not, return False
-    if word.lower() not in word_list:
-        return False
+    word_lower = word.lower()
+    word_dict = get_frequency_dict(word_lower)
+
+    # check if word is in word_list
+    if '*' not in word_lower:
+        # if word_lower doesn't have a wildcard and isn't in word_list, it isn't a valid word
+        if word_lower not in word_list:
+            return False
+    else:
+        # if word_lower does have a wildcard, replace the wildcard with every vowel and try against word_list
+        wildcard_pos = word_lower.find('*')
+        found_word = False
+        for char in VOWELS[:-1]:
+            try_word = word_lower[:wildcard_pos] + char + word_lower[wildcard_pos+1:]
+            if try_word in word_list:
+                # change found_word to True if a word is found in word_list and break out of the loop
+                found_word = True
+                break
+        
+        # if found_word is still False, no word was found in word_list and word is not valid
+        if found_word == False:
+            return False
     
     # check if word can be made from letters in the hand
-    word_dict = get_frequency_dict(word.lower())
     for letter in word_dict:
         # if a letter in word_dict is not present in hand, then it cannot be a valid word
         if hand.get(letter) == None:
@@ -378,7 +393,4 @@ if __name__ == '__main__':
     word_list = load_words()
     play_game(word_list)
 
-    hand = {'e':1, 'v':2, 'n':1, 'i':1, 'l':2}
-    word = "EVIL"
-
-    print(is_valid_word(word,hand,word_list))
+    #print(get_word_score('cow', 7), get_word_score('c*ws', 7),get_word_score('cows', 7))
