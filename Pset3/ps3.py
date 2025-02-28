@@ -406,15 +406,29 @@ def play_game(word_list):
     """
     replay_available = True
     substitute_available = True
+    num_hands_prompted = False
     replay_hand_score = 0
     hand_score = 0
     game_score = 0
-    num_of_hands = int(input("\nHow many hands would you like to play?: ")) # assumes user input will be a positive integer
-    hands_remaining = num_of_hands
+    num_of_hands = 0
+    hands_remaining = 1 # initialized value is temporary so we can enter the game loop
     hand = deal_hand(HAND_SIZE)
     print()
 
     while hands_remaining > 0:
+        # set the number of hands to play and validate input - raise ValueError for any unacceptable input
+        if num_hands_prompted == False:
+            try:
+                num_of_hands = int(input("\nHow many hands would you like to play?: "))
+                if num_of_hands > 0:
+                    hands_remaining = num_of_hands
+                    num_hands_prompted = True
+                else:
+                    raise ValueError
+            except ValueError:
+                print("Not an allowable value. Please enter a positive integer.")
+                continue
+
         # if they are allowed to, ask if the user would like to perform a substitution
         if substitute_available:
             print("Current Hand: ", end='')
@@ -426,7 +440,7 @@ def play_game(word_list):
                 hand = substitute_hand(hand, letter)
             print()
 
-        # play a hand and update hand_score
+        # play a hand
         hand_score = play_hand(hand, word_list)
 
         # if we are replaying a hand, replay_hand_score will not be 0
