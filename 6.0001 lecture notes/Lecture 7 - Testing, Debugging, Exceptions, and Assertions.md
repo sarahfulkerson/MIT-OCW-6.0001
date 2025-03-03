@@ -23,3 +23,41 @@
 	- if no natural boundaries, **random testing** of many different inputs is the next best option
 	- **black box testing** - explore paths through code specifications
 	- **glass box testing** - explore paths through code
+- Black box testing
+	- test cases designed without looking at the code, but instead via specs
+	- can be done by someone other than the implementer to avoid bias
+	- test can be reused if implementation changes
+- Glass box testing
+	- use code itself to directly guide testing
+	- it is "**path-complete**" if every potential path thru code is tested at least once - however this can become a very large test set
+	- guidelines:
+		- for **branches**, exercise all parts of a conditional
+		- for **for loops**, check loop not entered, body of loop executed only once, then more than once
+		- for **while loops**, do same as for loops
+	- path-complete test suites could miss a bug, so you still need to test boundary cases like in black box testing
+- Dealing with Exceptions
+	- Python provides the ability to handle exceptions using try/except blocks
+	- exceptions raised by any statement in the body of a try block are handled by the except statement and execution continues with the body of the except statement
+	- can have separate except clauses to deal with a particular type of exception
+- Other Exceptions
+	- `else` - executed when code in try block finished with no errors
+	- `finally` - body is always executed after try, else, and except clauses, even if they raised another error or executed a break, continue, or return; useful for cleaning up code that should be run no matter what else happened (ex. close a file)
+- What to do with exceptions?
+	- fail silently - substitute values or just continue; bad idea because user gets no warning
+	- return an "error" value - what value to choose? bad idea, complicates code having to check for a special value
+	- stop execution and signal error condition - in Python, raise an exception using format `raise <exceptionName>(<arguments>)`
+- Assertions
+	- an example of good defensive programming
+	- used at the beginning of a function to make sure that the assumptions on computations are exactly what the function expects them to be
+	- raises an `AssertionError` exception if assumptions not met
+	```example-assert
+	def avg(grades): 
+		assert len(grades) != 0, 'no grades data' 
+		return sum(grades)/len(grades)
+	```
+- Assertions as defensive programming
+	- don't allow a programmer to control response to unexpected conditions
+	- ensures that execution halts whenever an expected condition is not met
+	- typically used to check inputs to functions but can be used anywhere
+	- can be used to check outputs of a function to avoid propagating bad values
+	- can make it easier to locate source of bugs
