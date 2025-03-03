@@ -1,0 +1,25 @@
+- 3 ways to maintain high quality code
+	- **Defensive programming** - try to keep bugs from entering your code in the first place
+		- Write specifications for functions
+		- Modularize programs
+		- Check conditions on inputs/outputs (assertions)
+	- **Testing/validation** - compare your inputs and outputs against specifications; is it doing what I expect?
+	- **Debugging** - study the events leading to an error to determine why code is not doing what you expect it to
+- When are you ready to test?
+	- When code runs - no syntax or static semantic errors
+	- When you have a set of expected inputs and outputs
+- Classes of test
+	- **unit testing**
+		- validate each piece of the program
+		- test each function separately
+	- **regression testing**
+		- add tests for bugs as you find them
+		- catch reintroduced errors that were previously fixed
+	- **integration testing**
+		- test the program as a whole
+		- don't rush towards this one! testing is a cycle
+- Testing approaches
+	- try and come up with some **natural boundaries** to the problem you are trying to solve with code
+	- if no natural boundaries, **random testing** of many different inputs is the next best option
+	- **black box testing** - explore paths through code specifications
+	- **glass box testing** - explore paths through code
