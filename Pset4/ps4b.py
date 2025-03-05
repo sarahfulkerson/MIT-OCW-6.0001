@@ -43,7 +43,7 @@ def is_word(word_list, word):
     False
     '''
     word = word.lower()
-    word = word.strip(" !@#$%^&*()-_+={}[]|\:;'<>?,./\"")
+    word = word.strip(" !@#$%^&*()-_+={}[]|\\:;'<>?,./\"")
     return word in word_list
 
 def get_story_string():
@@ -70,7 +70,9 @@ class Message(object):
             self.message_text (string, determined by input text)
             self.valid_words (list, determined using helper function load_words)
         '''
-        pass #delete this line and replace with your code here
+        self.message_text = text
+        self.valid_words = load_words(WORDLIST_FILENAME)
+
 
     def get_message_text(self):
         '''
@@ -78,7 +80,7 @@ class Message(object):
         
         Returns: self.message_text
         '''
-        pass #delete this line and replace with your code here
+        return self.message_text
 
     def get_valid_words(self):
         '''
@@ -87,7 +89,7 @@ class Message(object):
         
         Returns: a COPY of self.valid_words
         '''
-        pass #delete this line and replace with your code here
+        return self.valid_words.copy()
 
     def build_shift_dict(self, shift):
         '''
@@ -103,7 +105,20 @@ class Message(object):
         Returns: a dictionary mapping a letter (string) to 
                  another letter (string). 
         '''
-        pass #delete this line and replace with your code here
+        assert isinstance(shift, int), "Parameter 'shift' must be an int."
+        
+        shift_dict = {}
+
+        # iterate over all lowercase characters, providing both the index and char at that index
+        # add the shift value to the current index to get the char to retrieve, using modulus operator to make sure we don't over index, then add to shift_dict
+        for pos, char in enumerate(string.ascii_lowercase):
+            shift_dict[char] = string.ascii_lowercase[(pos + shift) % 26]
+        
+        # do the same for all uppercase characters
+        for pos, char in enumerate(string.ascii_uppercase):
+            shift_dict[char] = string.ascii_uppercase[(pos + shift) % 26]
+
+        return shift_dict
 
     def apply_shift(self, shift):
         '''
@@ -117,7 +132,22 @@ class Message(object):
         Returns: the message text (string) in which every character is shifted
              down the alphabet by the input shift
         '''
-        pass #delete this line and replace with your code here
+        assert isinstance(shift, int), "Parameter 'shift' must be an int."
+        
+        shifted_message_text = ''
+        shift_dict = self.build_shift_dict(shift) # create a shifted dictionary based on int value 'shift'
+
+        # For every character in self.message_text, check if it is in our shift_dict (i.e. a lowercase or uppercase letter of the alphabet).
+        # If val == None then it is not, so append the character to shifted_message_text.
+        # Otherwise, grab the value for key 'char' and append the character to shifted_message_text.
+        for char in self.get_message_text():
+            val = shift_dict.get(char)
+            if val == None:
+                shifted_message_text += char
+            else:
+                shifted_message_text += val
+        
+        return shifted_message_text
 
 class PlaintextMessage(Message):
     def __init__(self, text, shift):
@@ -218,7 +248,8 @@ if __name__ == '__main__':
 #    print('Actual Output:', ciphertext.decrypt_message())
 
     #TODO: WRITE YOUR TEST CASES HERE
+    m = Message('sarah was\\\' HERE')
+    print(m.get_message_text())
+    print(m.apply_shift(2))
 
     #TODO: best shift value and unencrypted story 
-    
-    pass #delete this line and replace with your code here
