@@ -105,18 +105,19 @@ class Message(object):
         Returns: a dictionary mapping a letter (string) to 
                  another letter (string). 
         '''
-        assert isinstance(shift, int), "Parameter 'shift' must be an int."
-        
         shift_dict = {}
-
-        # iterate over all lowercase characters, providing both the index and char at that index
-        # add the shift value to the current index to get the char to retrieve, using modulus operator to make sure we don't over index, then add to shift_dict
-        for pos, char in enumerate(string.ascii_lowercase):
-            shift_dict[char] = string.ascii_lowercase[(pos + shift) % 26]
         
-        # do the same for all uppercase characters
-        for pos, char in enumerate(string.ascii_uppercase):
-            shift_dict[char] = string.ascii_uppercase[(pos + shift) % 26]
+        try:
+            # iterate over all lowercase characters, providing both the index and char at that index
+            # add the shift value to the current index to get the char to retrieve, using modulus operator to make sure we don't over index, then add to shift_dict
+            for pos, char in enumerate(string.ascii_lowercase):
+                shift_dict[char] = string.ascii_lowercase[(pos + shift) % 26]
+            
+            # do the same for all uppercase characters
+            for pos, char in enumerate(string.ascii_uppercase):
+                shift_dict[char] = string.ascii_uppercase[(pos + shift) % 26]
+        except TypeError:
+            raise TypeError("value for 'shift' must be an int.")
 
         return shift_dict
 
@@ -131,9 +132,7 @@ class Message(object):
 
         Returns: the message text (string) in which every character is shifted
              down the alphabet by the input shift
-        '''
-        assert isinstance(shift, int), "Parameter 'shift' must be an int."
-        
+        '''        
         shifted_message_text = ''
         shift_dict = self.build_shift_dict(shift) # create a shifted dictionary based on int value 'shift'
 
@@ -247,9 +246,11 @@ if __name__ == '__main__':
 #    print('Expected Output:', (24, 'hello'))
 #    print('Actual Output:', ciphertext.decrypt_message())
 
-    #TODO: WRITE YOUR TEST CASES HERE
+    #TODO: WRITE YOUR TEST CASES 
+    
+    # Test 1: methods for class Message
     m = Message('sarah was\\\' HERE')
     print(m.get_message_text())
-    print(m.apply_shift(2))
+    print(m.apply_shift(-2))
 
     #TODO: best shift value and unencrypted story 
