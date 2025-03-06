@@ -303,3 +303,5 @@ if __name__ == '__main__':
     print()
 
     # TODO: best shift value and unencrypted story 
+    ciphertext = CiphertextMessage(get_story_string())
+    print(ciphertext.decrypt_message())
