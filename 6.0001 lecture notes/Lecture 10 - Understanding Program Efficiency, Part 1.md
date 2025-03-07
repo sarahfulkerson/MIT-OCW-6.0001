@@ -1,0 +1,89 @@
+- We want to understand the efficiency of our programs
+	- two areas to consider: **time efficiency** and **space efficiency**, and sometimes there is a tradeoff between the two
+	- need to answer some fundamental questions:
+		1. how can we reason through an algorithm to predict how long it will take to solve a problem of a particular size?
+		2. how can we relate our choices in algorithm design to the time efficiency of the resulting algorithm?
+	- Challenges in understanding efficiency:
+		1. programs can be implemented in many different ways
+		2. you can solve a problem using only a handful of different algorithms
+		3. would like separate choices of implementation from choices of more abstract algorithm
+- How to eval efficiency?
+	1. measure with a **timer**
+	2. **count** the operations
+	3. abstract notion of **order of growth**
+		- probably the most appropriate way of measuring the impact of choices of algorithms
+- Timing a program
+	- can use the `time` module
+	- however, approach is inconsistent when your goal is to evaluate different algorithms:
+		- running time varies between algorithms - desirable
+		- running time varies between implementations - undesirable
+		- running time varies between computers - undesirable
+		- running time is not predictable based on small inputs - undesirable
+	- time varies for different inputs, but cannot really express a relationship between inputs and time - undesirable
+- Counting operations
+	- assuming these steps/operations take constant time...
+		- mathematical operations
+		- comparisons
+		- assignments
+		- accessing objects in memory
+	- ...then you count the number of operations executed as a function of the size of your inputs.
+	- ![[Screenshot 2025-03-07 at 12.05.01 PM.png]]
+		- efficiency of `mysum` is `1 + 3x + 1` --> `3x + 2`
+		- counting operations is better than timing if your goal is to evaluate different algorithms, but not ideal:
+			- count **depends on algorithm** - desirable
+			- count **depends on implementations** - undesirable
+			- count is **independent of computers** - desirable
+			- no clear definition of **which operations to count** - undesirable
+		- count varies for different inputs and you can come up with a relationship between inputs and the count - desirable
+- Still need a better way
+	- timing and counting evaluate the implementation and timing evaluates machines, which I don't want
+	- I DO want to evaluate algorithm, scalability, and in terms of input size
+	- will focus on:
+		- the idea of counting operations, but not worry about small variations in implementations
+		- how the algorithm performs when the size of the problem gets arbitrarily large
+	- I want to relate the time needed to complete a computation against the size of the input to the problem, and I need to decide what to measure!
+- Which input to use to evaluate a function?
+	- if you want to express efficiency in terms of the size of your input, you need to decide what your input is
+	- Examples: integer, length of list, etc.
+	- must make a decision when you have multiple parameters in a function
+- Best, average, and worst cases
+	- when evaluating the time efficiency of an algorithm, you have a best case, worst case, and average case scenario for your algorithm based on the input
+		- **best case**: minimum running time over all possible inputs of a given size
+		- **average case**: average running time over all possible inputs of a given size
+		- **worst case**: maximum running time over all possible inputs of a given size
+	- generally, you focus on the worst case scenario - it gives you an upper bound on the time an algorithm will take to run
+- Measuring order of growth with Big Oh notation
+	- measures an **upper bound on the asymptotic growth**
+	- Big Oh or O() used to describe the worst case scenario
+	- Example: if you count operations in an algorithm and get the result `5n +2`, your Big Oh notation would be `O(n)` - why? because we're measuring the **worst case asymptotic complexity**, so we ignore:
+		- additive constants
+		- multiplicative constants
+- Simplification examples
+	- we focus on **dominant terms** -  if it's a polynomial, we focus on highest order terms
+		- `n^2 + 100000n + 3^1000` : O(n^2)
+		- `n^2 + 2n + 2` : O(n^2)
+		- `log(n) + n + 4` : O(n)
+		- `0.0001\*n\*log(n) + 300n` : O(n log n)
+		- `2n^30 + 3^n` : O(3n)
+	- exponentials are much worse than powers
+- Types of orders of growth
+	- constant, linear, quadratic, logarithmic, log linear (n log n), exponential
+- Analyzing programs and their complexity
+	- **combine** together complexity classes by analyzing statements inside functions - apply some rules and focus on dominant terms
+	- use the **Law of Addition** for O() with **sequential** statements!
+		- Ex. you have two loops one after the other, whose inputs measure O(n) and O(n\*n) respectively
+		- Simplify the polynomial, then take the dominant term: `O(n) + O(n*n) = O(n+n^2) = O(n^2)` --> quadratic growth
+	- use the **Law of Multiplication** for O() with **nested** statements/loops
+		- Ex. you have two loops, one nested in the other, whose inputs measure O(n) and O(n) respectively
+		- Same as Law of Addition - simplify then take the dominant term: `O(n)*O(n) = O(n*n) = O(n^2)` --> quadratic growth
+- All complexity classes, ordered low to high
+	- O(1) denotes **constant** running time
+	- O(log n) denotes **logarithmic** running time
+	- O(n) denotes **linear** running time
+	- O(n log n) denotes **log-linear** running time
+	- O(n^c) denotes **polynomial** running time (c is a constant)
+	- O(c^n) denotes **exponential** running time (c is a constant being raised to a power based on size of input)
+- Linear complexity
+	- simple iterative loop algorithms are usually linear - O(n)
+- Quadratic complexity
+	- simple nested loops usually have quadratic complexity - O(n^c)
