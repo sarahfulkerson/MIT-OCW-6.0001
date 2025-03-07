@@ -207,7 +207,6 @@ class PlaintextMessage(Message):
         self.encryption_dict = self.build_shift_dict(self.shift)
         self.message_text_encrypted = self.apply_shift(self.shift)
 
-
 class CiphertextMessage(Message):
     def __init__(self, text):
         '''
