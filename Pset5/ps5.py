@@ -54,9 +54,34 @@ def process(url):
 
 # Problem 1
 
-# TODO: NewsStory
+class NewsStory(object):
+    def __init__(self, guid, title, description, link, pubdate):
+        self.guid = guid
+        self.title = title
+        self.description = description
+        self.link = link
+        self.pubdate = pubdate
+    
+    def get_guid(self):
+        """Returns: self.guid"""
+        return self.guid
+    
+    def get_title(self):
+        """Returns: self.title"""
+        return self.title
 
-
+    def get_description(self):
+        """Returns: self.description"""
+        return self.description
+    
+    def get_link(self):
+        """Returns: self.link"""
+        return self.link
+    
+    def get_pubdate(self):
+        """Returns: self.pubdate"""
+        return self.pubdate
+    
 #======================
 # Triggers
 #======================
