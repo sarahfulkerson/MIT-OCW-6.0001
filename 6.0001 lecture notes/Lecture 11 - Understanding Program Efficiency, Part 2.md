@@ -9,8 +9,7 @@
 	- worst case scenario: we have to search the entire list (which can be represented by `n/2^i`) until we reach a list of length 1 or determine that the element is not present in the list 
 	- so, stop when `n/2^i = 1`, which is the same as saying stop when `2^i >= n`, which is the same as saying `log2(n) = i`, which is the same as as saying "2 raised to the i-th power represents the number of times we would have to bisect a list in order to search the entire list"
 	- therefore, the search complexity of a binary search is `log2(n)`
-
-Bisection search implementation #1
+### Bisection search implementation #1
 ```bisect_search1
 def bisect_search1(L, e):
 	if L == []:    # constant O(1)
@@ -27,8 +26,7 @@ def bisect_search1(L, e):
 - complexity is O(log n) for the bisection search calls, but O(n) for EACH list copy operation because the list starts at length of 'n' before you cut it in half (slicing a list creates a copy)
 - so, O(log n) for the recursive calls \* O(n) for each list copy operation inside the recursive call gives us O(n log n), "log linear"
 - what if I didn't have to copy the list? what if I could just have a "pointer" and move the pointer to a different part of the existing list?
-
-Bisection search implementation #2
+### Bisection search implementation #2
 ```bisect_search2
 def bisect_search2(L, e):
 	def bisect_search_helper(L, e, low, high):
@@ -50,9 +48,8 @@ def bisect_search2(L, e):
 		return bisect_search_helper(L, e, 0, len(L) - 1)
 ```
 - still have the O(log n) complexity of the binary search, but we eliminated the list copying of O(n) complexity and replaced it with O(1) constant complexity operations
-- **Note**: anything that is iterative and reduces the problem space by 1 each time is **linear**, anything that reduces the problemscape by half/third/quarter each time is going to be logarithmic in **complexity**
-
-Convert ints to strings
+- **Note**: anything that is iterative and reduces the problem space by 1 each time is **linear**, anything that reduces the problem scope by half/third/quarter each time is going to be **logarithmic** in complexity
+### Convert `ints` to `strings`
 ```intToStr
 def intToStr(i):
 	digits = '0123456789'
@@ -91,7 +88,7 @@ def towersOfHanoi(n, source, target, spare):
 #### Explanation:
 - to solve Towers of Hanoi, you have to do 3 things:
 	1. move a stack of n-1 disks from source to to spare
-	2. then, move n-the (largest) disk from source to target
+	2. then, move the n-th (largest) disk from source to target
 	3. finally, move the stack of n-1 disks from spare to target
 - therefore, each time you move the largest disk (size of 1), you have to solve the problem for a stack of disks of size n-1 two times
 - so, the time needed to solve a tower of size 'n' is the time it takes to solve the smaller tower two times, plus 1 for the time it takes to solve for the largest disk (a single move)
@@ -138,10 +135,14 @@ $$
 def genSubsets(L):
 	if len(L) == 0:
 		return [[]]    # list of empty list
-	smaller = genSubsets(L[:-1])    # all subsets without last element 
-	extra = L[-1:]    # create a list of just last element
+	subsets = genSubsets(L[:-1])    # all subsets without last element 
+	last_item = L[-1:]    # create a list of just last element
 	new = []
-	for small in smaller:
-		new.append(small+extra)    # for all smaller solutions, add one with last element
-	return smaller+new    # combine those with last element and those without
+	for item in subsets:
+		new.append(item+last_item)    # for all smaller solutions, add one with last element
+	return subsets+new    # combine those with last element and those without
 ```
+#### Explanation:
+- Each recursive call effectively doubles the number of items returned by the last call - i.e., if `subsets` is of length 4, then `new` will also have length 4, then when we add them together in the `return` statement we will have a list of length 8
+- If we're doubling the list length with each recursive call return, that means that a list of length n+1 would produce double the result of a list of length n
+- This pattern can be represented as {$2*2*2$...} or, more simply, {$2^n$}
