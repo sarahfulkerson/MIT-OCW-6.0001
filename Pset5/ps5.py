@@ -98,7 +98,66 @@ class Trigger(object):
 # PHRASE TRIGGERS
 
 # Problem 2
-# TODO: PhraseTrigger
+class PhraseTrigger(Trigger):
+    """
+    Abstract class which takes one string parameter (phrase) to use as a trigger. Inherits from Trigger.
+    
+    phrase: string
+    """
+    def __init__(self, phrase=''):
+        """Calls __init__ method of superclass Trigger and sets self.phrase = phrase.lower()"""
+        super().__init__()
+
+        self.phrase = phrase.lower()
+    
+    def is_phrase_in(self, text=''):
+        """
+        text: string
+
+        Returns 'True' if self.phrase is present in 'text', otherwise returns 'False'.
+        """
+        # convert 'text' to lowercase and strip all punctuation
+        stripped_text = ''
+
+        for char in text.lower().strip():
+            if char in string.ascii_lowercase or char in string.whitespace:
+                stripped_text += char
+
+        # split phrase and stripped_text on any whitespace character
+        split_phrase = self.phrase.strip().split()
+        split_text = stripped_text.split()
+
+        # if split_text is shorter than split_phrase, then split_phrase cannot be present
+        if len(split_phrase) > len(split_text):
+            return False
+        
+        # Search every item of split_text for the first item of split_phrase
+        ## If the first item of split_phrase is present and split_phrase has only 1 item, return True
+        ## Else if the first item of split_phrase is present, check if the rest of the phrase is present
+        for index in range(len(split_text) - len(split_phrase) + 1):    # prevent over indexing on split_text by stopping iteration when the last index in split_phrase lines up with the last index in split_text
+            found_first_item = split_text[index] == split_phrase[0]
+            
+            if found_first_item and len(split_phrase) == 1:
+                return True
+            elif found_first_item:
+                position = index
+                found_phrase = True
+
+                # Check if every word in split_phrase is present IN ORDER inside split_text
+                ## Break out of the loop early and set found_phrase to False if the split_phrase word does not match the split_text word at the appropriate position
+                ## Otherwise, increment our position in split_text and keep checking the words in split_phrase
+                for word in split_phrase:
+                    if word != split_text[position]:
+                        found_phrase = False
+                        break
+                    position += 1
+                
+                # If found_phrase is still True, return True
+                if found_phrase == True:
+                    return True
+        
+        # The first item of split_phrase was not found in split_text, so return False
+        return False
 
 # Problem 3
 # TODO: TitleTrigger
