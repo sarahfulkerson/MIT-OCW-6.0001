@@ -160,7 +160,29 @@ class PhraseTrigger(Trigger):
         return False
 
 # Problem 3
-# TODO: TitleTrigger
+class TitleTrigger(PhraseTrigger):
+    """
+    Trigger class which fires when parameter 'phrase' is found in the title of a NewsStory object.
+    
+    Takes one string parameter (phrase) to use as a trigger. Inherits from PhraseTrigger.
+    
+    phrase: string
+    """
+    def __init__(self, phrase=''):
+        """Calls __init__ method of superclass PhraseTrigger"""
+        super().__init__(phrase)
+    
+    def is_phrase_in(self, newsStory):
+        """
+        newsStory: instance of class NewsStory
+
+        Returns 'True' if self.phrase is present in the title of 'newsStory', otherwise returns 'False'.
+        """
+        title = newsStory.get_title()
+        return super().is_phrase_in(title)
+    
+    def evaluate(self, story):
+        return self.is_phrase_in(story)
 
 # Problem 4
 # TODO: DescriptionTrigger
