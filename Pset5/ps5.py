@@ -11,6 +11,7 @@ from project_util import translate_html
 from mtTkinter import *
 from datetime import datetime
 import pytz
+from abc import ABC, abstractmethod
 
 
 #-----------------------------------------------------------------------
@@ -55,7 +56,19 @@ def process(url):
 # Problem 1
 
 class NewsStory(object):
-    def __init__(self, guid, title, description, link, pubdate):
+    """
+    Used to represent a news story obtained from an RSS feed.
+    """
+    def __init__(self, guid: str, title: str, description: str, link: str, pubdate: datetime):
+        """
+        Creates a NewsStory object with the following attributes:
+
+        self.guid (string): the globally unique identifier for a news story\n
+        self.title (string): the title of a news story\n
+        self.description (string): the description of a news story\n
+        self.link (string): a link which takes you to additional content about a news story\n
+        self.pubdate (datetime): the publication date of a news story\n
+        """
         self.guid = guid
         self.title = title
         self.description = description
@@ -86,14 +99,20 @@ class NewsStory(object):
 # Triggers
 #======================
 
-class Trigger(object):
-    def evaluate(self, story):
+class Trigger(ABC):
+    """
+    Modified from original problem set:\n
+    -- Abstract class Trigger now inherits from 'abc'\n
+    -- Method 'evaluate' is now an abstract method
+    """
+    @abstractmethod
+    def evaluate(self, newsStory: NewsStory):
         """
         Returns True if an alert should be generated
         for the given news item, or False otherwise.
         """
         # DO NOT CHANGE THIS!
-        raise NotImplementedError
+        ## I changed it - sorry MIT!
 
 # PHRASE TRIGGERS
 
@@ -104,7 +123,7 @@ class PhraseTrigger(Trigger):
     
     phrase: string
     """
-    def __init__(self, phrase=''):
+    def __init__(self, phrase: str):
         """
         Calls __init__ method of superclass Trigger.
         
@@ -114,7 +133,7 @@ class PhraseTrigger(Trigger):
 
         self.phrase = phrase.lower()
     
-    def is_phrase_in(self, text=''):
+    def is_phrase_in(self, text: str):
         """
         text: string
 
@@ -174,7 +193,7 @@ class TitleTrigger(PhraseTrigger):
     
     phrase: string
     """
-    def __init__(self, phrase=''):
+    def __init__(self, phrase: str):
         """
         Calls __init__ method of superclass PhraseTrigger.
         
@@ -182,7 +201,7 @@ class TitleTrigger(PhraseTrigger):
         """
         super().__init__(phrase)
     
-    def evaluate(self, newsStory):
+    def evaluate(self, newsStory: NewsStory):
         """
         newsStory: instance of class NewsStory
 
@@ -192,7 +211,7 @@ class TitleTrigger(PhraseTrigger):
 
 # Problem 4
 class DescriptionTrigger(PhraseTrigger):
-    def __init__(self, phrase=''):
+    def __init__(self, phrase: str):
         """
         Calls __init__ method of superclass PhraseTrigger.
         
@@ -200,7 +219,7 @@ class DescriptionTrigger(PhraseTrigger):
         """
         super().__init__(phrase)
     
-    def evaluate(self, newsStory):
+    def evaluate(self, newsStory: NewsStory):
         """
         newsStory: instance of class NewsStory
 
@@ -211,19 +230,112 @@ class DescriptionTrigger(PhraseTrigger):
 # TIME TRIGGERS
 
 # Problem 5
-# TODO: TimeTrigger
 # Constructor:
 #        Input: Time has to be in EST and in the format of "%d %b %Y %H:%M:%S".
 #        Convert time from string to a datetime before saving it as an attribute.
 
-# Problem 6
-# TODO: BeforeTrigger and AfterTrigger
+class TimeTrigger(Trigger):
+    """
+    Abstract class which takes one string parameter (time) to use as a trigger. Inherits from Trigger.
+    
+    time: string, required format "3 Oct 2016 17:00:10"
+    """
+    def __init__(self, time: str):
+        """
+        Calls __init__ method of superclass Trigger.
+        
+        Converts 'time' to datetime object and assigns to self.time
+        """
+        super().__init__()
 
+        self.time = datetime.strptime(time, "%d %b %Y %H:%M:%S")
+    
+    def match_newsstory_timezone(self, newsStory: NewsStory):
+        """
+        Returns a new datetime object 'matched_time' which takes the value of self.time (datetime) and matches the tzinfo attribute to the tzinfo attribute of parameter 'newsStory'.
+
+        newsStory: instance of class NewsStory
+
+        Returns: datetime object 
+        """
+        matched_time = self.time
+        matched_time = matched_time.replace(tzinfo=newsStory.get_pubdate().tzinfo)
+        return matched_time
+
+# Problem 6
+class BeforeTrigger(TimeTrigger):
+    """
+    Trigger class which fires when a NewsStory object is published strictly before the value of the class' self.time attribute.
+    
+    Takes one string parameter (time) to use as a trigger. Inherits from TimeTrigger.
+    
+    time: string, required format "3 Oct 2016 17:00:10" in EST
+    """
+    def __init__(self, time: str):
+        """
+        Calls __init__ method of superclass TimeTrigger.
+        
+        Superclass method converts 'time' to datetime object and assigns to self.time
+        """
+        super().__init__(time)
+    def evaluate(self, newsStory: NewsStory):
+        """
+        newsStory: instance of class NewsStory
+
+        Returns 'True' if NewsStory object is published strictly before the value of the class' self.time attribute, otherwise returns 'False'.
+        """
+        matched_time = self.match_newsstory_timezone(newsStory)
+
+        return newsStory.get_pubdate() < matched_time
+
+class AfterTrigger(TimeTrigger):
+    """
+    Trigger class which fires when a NewsStory object is published strictly after the value of the class' self.time attribute.
+    
+    Takes one string parameter (time) to use as a trigger. Inherits from TimeTrigger.
+    
+    time: string, required format "3 Oct 2016 17:00:10" in EST
+    """
+    def __init__(self, time: str):
+        """
+        Calls __init__ method of superclass TimeTrigger.
+        
+        Superclass method converts 'time' to datetime object and assigns to self.time
+        """
+        super().__init__(time)
+    def evaluate(self, newsStory: NewsStory):
+        """
+        newsStory: instance of class NewsStory
+
+        Returns 'True' if NewsStory object is published strictly after the value of the class' self.time attribute, otherwise returns 'False'.
+        """
+        matched_time = self.match_newsstory_timezone(newsStory)
+
+        return matched_time < newsStory.get_pubdate()
 
 # COMPOSITE TRIGGERS
 
 # Problem 7
-# TODO: NotTrigger
+class NotTrigger(Trigger):
+    """
+    Trigger class which inverts the output of another Trigger object's 'evaluate' method call.
+    
+    Takes one Trigger parameter (trigger). Inherits from Trigger.
+    
+    trigger: Trigger
+    """
+    def __init__(self, trigger: Trigger):
+        """
+        Calls __init__ method of superclass Trigger.
+        
+        Method assigns parameter 'trigger' to 'self.trigger'.
+        """
+        super().__init__()
+
+        self.trigger = trigger
+    
+    def evaluate(self, newsStory: NewsStory):
+        return not self.trigger.evaluate(newsStory)
 
 # Problem 8
 # TODO: AndTrigger

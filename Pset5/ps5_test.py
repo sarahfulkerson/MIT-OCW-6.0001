@@ -114,6 +114,30 @@ class ProblemSet5(unittest.TestCase):
             self.assertFalse(trig.evaluate(nospaces), "DescriptionTrigger fired when words were not separated by spaces or punctuation.")
             self.assertFalse(trig.evaluate(nothing), "DescriptionTrigger fired when none of the words in the phrase appeared.")
 
+    def test3BeforeAndAfterTrigger(self):
+
+        dt = timedelta(seconds=5)
+        now = datetime(2016, 10, 12, 23, 59, 59)
+        ancient = NewsStory('', '', '', '', datetime(1987, 10, 15))
+        just_now = NewsStory('', '', '', '', now - dt)
+        in_a_bit = NewsStory('', '', '', '', now + dt)
+        future = NewsStory('', '', '', '', datetime(2087, 10, 15))
+
+        s1 = BeforeTrigger('12 Oct 2016 23:59:59')
+        s2 = AfterTrigger('12 Oct 2016 23:59:59')
+
+        self.assertTrue(s1.evaluate(ancient), "BeforeTrigger failed to fire on news from long ago")
+        self.assertTrue(s1.evaluate(just_now), "BeforeTrigger failed to fire on news happened right before specified time")
+
+        self.assertFalse(s1.evaluate(in_a_bit), "BeforeTrigger fired to fire on news happened right after specified time")
+        self.assertFalse(s1.evaluate(future), "BeforeTrigger fired to fire on news from the future")
+
+        self.assertFalse(s2.evaluate(ancient), "AfterTrigger fired to fire on news from long ago")
+        self.assertFalse(s2.evaluate(just_now), "BeforeTrigger fired to fire on news happened right before specified time")
+
+        self.assertTrue(s2.evaluate(in_a_bit), "AfterTrigger failed to fire on news just after specified time")
+        self.assertTrue(s2.evaluate(future), "AfterTrigger failed to fire on news from long ago")
+
     def test3altBeforeAndAfterTrigger(self):
 
         dt = timedelta(seconds=5)
@@ -147,29 +171,6 @@ class ProblemSet5(unittest.TestCase):
         self.assertTrue(s2.evaluate(in_a_bit), "AfterTrigger failed to fire on news just after specified time")
         self.assertTrue(s2.evaluate(future), "AfterTrigger failed to fire on news from long ago")
 
-    def test3BeforeAndAfterTrigger(self):
-
-        dt = timedelta(seconds=5)
-        now = datetime(2016, 10, 12, 23, 59, 59)
-        ancient = NewsStory('', '', '', '', datetime(1987, 10, 15))
-        just_now = NewsStory('', '', '', '', now - dt)
-        in_a_bit = NewsStory('', '', '', '', now + dt)
-        future = NewsStory('', '', '', '', datetime(2087, 10, 15))
-
-        s1 = BeforeTrigger('12 Oct 2016 23:59:59')
-        s2 = AfterTrigger('12 Oct 2016 23:59:59')
-
-        self.assertTrue(s1.evaluate(ancient), "BeforeTrigger failed to fire on news from long ago")
-        self.assertTrue(s1.evaluate(just_now), "BeforeTrigger failed to fire on news happened right before specified time")
-
-        self.assertFalse(s1.evaluate(in_a_bit), "BeforeTrigger fired to fire on news happened right after specified time")
-        self.assertFalse(s1.evaluate(future), "BeforeTrigger fired to fire on news from the future")
-
-        self.assertFalse(s2.evaluate(ancient), "AfterTrigger fired to fire on news from long ago")
-        self.assertFalse(s2.evaluate(just_now), "BeforeTrigger fired to fire on news happened right before specified time")
-
-        self.assertTrue(s2.evaluate(in_a_bit), "AfterTrigger failed to fire on news just after specified time")
-        self.assertTrue(s2.evaluate(future), "AfterTrigger failed to fire on news from long ago")
 
     def test4NotTrigger(self):
         n = NotTrigger(self.tt)
