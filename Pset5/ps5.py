@@ -105,7 +105,11 @@ class PhraseTrigger(Trigger):
     phrase: string
     """
     def __init__(self, phrase=''):
-        """Calls __init__ method of superclass Trigger and sets self.phrase = phrase.lower()"""
+        """
+        Calls __init__ method of superclass Trigger.
+        
+        Sets self.phrase = phrase.lower()
+        """
         super().__init__()
 
         self.phrase = phrase.lower()
@@ -116,12 +120,14 @@ class PhraseTrigger(Trigger):
 
         Returns 'True' if self.phrase is present in 'text', otherwise returns 'False'.
         """
-        # convert 'text' to lowercase and strip all punctuation
+        # convert 'text' to lowercase and replace all punctuation with ' '
         stripped_text = ''
 
         for char in text.lower().strip():
             if char in string.ascii_lowercase or char in string.whitespace:
                 stripped_text += char
+            elif char in string.punctuation:
+                stripped_text += ' '
 
         # split phrase and stripped_text on any whitespace character
         split_phrase = self.phrase.strip().split()
@@ -169,23 +175,38 @@ class TitleTrigger(PhraseTrigger):
     phrase: string
     """
     def __init__(self, phrase=''):
-        """Calls __init__ method of superclass PhraseTrigger"""
+        """
+        Calls __init__ method of superclass PhraseTrigger.
+        
+        Superclass method sets self.phrase = phrase.lower()
+        """
         super().__init__(phrase)
     
-    def is_phrase_in(self, newsStory):
+    def evaluate(self, newsStory):
         """
         newsStory: instance of class NewsStory
 
         Returns 'True' if self.phrase is present in the title of 'newsStory', otherwise returns 'False'.
         """
-        title = newsStory.get_title()
-        return super().is_phrase_in(title)
-    
-    def evaluate(self, story):
-        return self.is_phrase_in(story)
+        return self.is_phrase_in(newsStory.get_title())
 
 # Problem 4
-# TODO: DescriptionTrigger
+class DescriptionTrigger(PhraseTrigger):
+    def __init__(self, phrase=''):
+        """
+        Calls __init__ method of superclass PhraseTrigger.
+        
+        Superclass method sets self.phrase = phrase.lower()
+        """
+        super().__init__(phrase)
+    
+    def evaluate(self, newsStory):
+        """
+        newsStory: instance of class NewsStory
+
+        Returns 'True' if self.phrase is present in the description of 'newsStory', otherwise returns 'False'.
+        """
+        return super().is_phrase_in(newsStory.get_description())
 
 # TIME TRIGGERS
 
