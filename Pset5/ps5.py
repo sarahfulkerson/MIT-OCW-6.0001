@@ -12,6 +12,7 @@ from mtTkinter import *
 from datetime import datetime
 import pytz
 from abc import ABC, abstractmethod
+from typing import List
 
 
 #-----------------------------------------------------------------------
@@ -403,18 +404,20 @@ class OrTrigger(Trigger):
 #======================
 
 # Problem 10
-def filter_stories(stories, triggerlist):
+def filter_stories(stories: List[NewsStory], triggerlist: List[Trigger]) -> list:
     """
-    Takes in a list of NewsStory instances.
+    Takes in a list of NewsStory instances and a list of Trigger instances
 
     Returns: a list of only the stories for which a trigger in triggerlist fires.
     """
-    # TODO: Problem 10
-    # This is a placeholder
-    # (we're just returning all the stories, with no filtering)
-    return stories
+    triggered_stories = []
 
+    # for every story in stories, evaluate every Trigger in triggerlist. if any Trigger evaluates to True, add the story to the triggered_stories list.
+    for story in stories:
+        if any(trigger.evaluate(story) for trigger in triggerlist):
+            triggered_stories.append(story)
 
+    return triggered_stories
 
 #======================
 # User-Specified Triggers
