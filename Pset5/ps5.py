@@ -13,6 +13,7 @@ from datetime import datetime
 import pytz
 from abc import ABC, abstractmethod
 from typing import List
+import sys
 
 
 #-----------------------------------------------------------------------
@@ -404,7 +405,7 @@ class OrTrigger(Trigger):
 #======================
 
 # Problem 10
-def filter_stories(stories: List[NewsStory], triggerlist: List[Trigger]) -> list:
+def filter_stories(stories: List[NewsStory], triggerlist: List[Trigger]) -> List[NewsStory]:
     """
     Takes in a list of NewsStory instances and a list of Trigger instances
 
@@ -423,12 +424,11 @@ def filter_stories(stories: List[NewsStory], triggerlist: List[Trigger]) -> list
 # User-Specified Triggers
 #======================
 # Problem 11
-def read_trigger_config(filename):
+def read_trigger_config(filename: str) -> List[Trigger]:
     """
     filename: the name of a trigger configuration file
 
-    Returns: a list of trigger objects specified by the trigger configuration
-        file.
+    Returns: a list of trigger objects specified by the trigger configuration file.
     """
     # We give you the code to read in the file and eliminate blank lines and
     # comments. You don't need to know how it works for now!
@@ -439,13 +439,67 @@ def read_trigger_config(filename):
         if not (len(line) == 0 or line.startswith('//')):
             lines.append(line)
 
-    # TODO: Problem 11
-    # line is the list of lines that you need to parse and for which you need
-    # to build triggers
+    # Problem 11 starts here
+    parsed_triggers = {}
+    added_triggers = []
 
-    print(lines) # for now, print it so you see what it contains!
+    line: str   # type hint for making my life easier - expect 'line' to be a string in the for loop below
+    for line in lines:
+        split_line = line.split(',')
+        key = split_line[0]
+        
+        # try to make Triggers out of every line that isn't an ADD command
+        # IMPORTANT: assumes that first item of split_line is either an ADD command or the name of the trigger to create
+        if key != 'ADD':
+            trigger_type = split_line[1].upper()
+            remaining_args = split_line[2:]
+            
+            # the block below will throw TypeErrors if too many arguments are supplied for the type of Trigger, or a ValueError if the user incorrectly specified a trigger
+            # loop will continue trying to create Triggers after those exceptions are raised
+            try:
+                if trigger_type == 'TITLE':
+                    parsed_triggers[key] = TitleTrigger(*remaining_args)
+                elif trigger_type == 'DESCRIPTION':
+                    parsed_triggers[key] = DescriptionTrigger(*remaining_args)
+                elif trigger_type == 'AFTER':
+                    parsed_triggers[key] = AfterTrigger(*remaining_args)
+                elif trigger_type == 'BEFORE':
+                    parsed_triggers[key] = BeforeTrigger(*remaining_args)
+                elif trigger_type == 'NOT':
+                    parsed_triggers[key] = NotTrigger(parsed_triggers.get(*remaining_args))
+                elif trigger_type == 'AND' or trigger_type == 'OR':
+                    and_args = []
 
+                    for arg in remaining_args:
+                        and_args.append(parsed_triggers.get(arg))
 
+                    if trigger_type == 'AND':
+                        parsed_triggers[key] = AndTrigger(*and_args)
+                    else:
+                        parsed_triggers[key] = OrTrigger(*and_args)
+                else:
+                    raise ValueError
+
+            except TypeError:
+                print("Incorrect number of arguments for Trigger type", trigger_type, "- Trigger was not added!", sys.stderr)
+                continue
+            except ValueError:
+                print("No Trigger type found for input", trigger_type, "- Trigger was not added!", sys.stderr)
+                continue
+        else:
+            # this line is an ADD command, so try and fetch all requested Triggers and add them to parsed_triggers
+            # if requested Trigger is not found: KeyError is thrown, trigger is not added, and loop continues
+            request = ''
+            
+            for arg in split_line[1:]:
+                request = arg
+                try:
+                    added_triggers.append(parsed_triggers[arg])
+                except KeyError:
+                    print("No Trigger found with name", request, "- Trigger was not added!", sys.stderr)
+                    continue
+
+    return added_triggers
 
 SLEEPTIME = 120 #seconds -- how often we poll
 
@@ -461,7 +515,7 @@ def main_thread(master):
 
         # Problem 11
         # TODO: After implementing read_trigger_config, uncomment this line 
-        # triggerlist = read_trigger_config('triggers.txt')
+        triggerlist = read_trigger_config('triggers.txt')
         
         # HELPER CODE - you don't need to understand this!
         # Draws the popup window that displays the filtered stories
@@ -471,8 +525,11 @@ def main_thread(master):
         scrollbar = Scrollbar(master)
         scrollbar.pack(side=RIGHT,fill=Y)
 
+        
         t = "Google & Yahoo Top News"
+        print("I will print")
         title = StringVar()
+        print("I will not print")
         title.set(t)
         ttl = Label(master, textvariable=title, font=("Helvetica", 18))
         ttl.pack(side=TOP)
