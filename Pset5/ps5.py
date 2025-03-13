@@ -1,14 +1,28 @@
 # 6.0001/6.00 Problem Set 5 - RSS Feed Filter
-# Name:
-# Collaborators:
-# Time:
+"""
+2025 March 13:
+
+My version of Problem Set 5 completely does away with tkinter,
+instead printing the results of the poll directly to the command
+line.
+
+As this code was written way back in 2016, I have had to do quite
+a few updates to get it working with more modern versions of
+python. Tkinter was causing such frustration trying to get it to
+work that I decided to implement the problem set to print to the
+command line instead. I also updated the original feedparser.py
+file to suppress annoying syntax warnings for invalid escape
+characters. 
+
+I used a venv virtual environment running python 3.8.10 to 
+develop the code for this problem set. Please see the
+requirements.txt for everything needed to recreate my environment.
+"""
 
 import feedparser
 import string
 import time
-import threading
 from project_util import translate_html
-from mtTkinter import *
 from datetime import datetime
 import pytz
 from abc import ABC, abstractmethod
@@ -76,6 +90,9 @@ class NewsStory(object):
         self.description = description
         self.link = link
         self.pubdate = pubdate
+    
+    def __str__(self):        
+        return f"Title: {self.title}\n\nDescription: {self.description}\n\nLink: {self.link}\n\nPublication Date: {self.pubdate}"
     
     def get_guid(self):
         """Returns: self.guid"""
@@ -503,76 +520,36 @@ def read_trigger_config(filename: str) -> List[Trigger]:
 
 SLEEPTIME = 120 #seconds -- how often we poll
 
-def main_thread(master):
+def main_thread():
     # A sample trigger list - you might need to change the phrases to correspond
     # to what is currently in the news
-    try:
-        t1 = TitleTrigger("election")
-        t2 = DescriptionTrigger("Trump")
-        t3 = DescriptionTrigger("Clinton")
-        t4 = AndTrigger(t2, t3)
-        triggerlist = [t1, t4]
 
-        # Problem 11
-        # TODO: After implementing read_trigger_config, uncomment this line 
-        triggerlist = read_trigger_config('triggers.txt')
-        
-        # HELPER CODE - you don't need to understand this!
-        # Draws the popup window that displays the filtered stories
-        # Retrieves and filters the stories from the RSS feeds
-        frame = Frame(master)
-        frame.pack(side=BOTTOM)
-        scrollbar = Scrollbar(master)
-        scrollbar.pack(side=RIGHT,fill=Y)
+    t1 = TitleTrigger("White House")
+    t2 = TitleTrigger("Musk")
+    t3 = DescriptionTrigger("government")
+    t4 = AndTrigger(t2, t3)
+    triggerlist = [t1, t4]
 
-        
-        t = "Google & Yahoo Top News"
-        print("I will print")
-        title = StringVar()
-        print("I will not print")
-        title.set(t)
-        ttl = Label(master, textvariable=title, font=("Helvetica", 18))
-        ttl.pack(side=TOP)
-        cont = Text(master, font=("Helvetica",14), yscrollcommand=scrollbar.set)
-        cont.pack(side=BOTTOM)
-        cont.tag_config("title", justify='center')
-        button = Button(frame, text="Exit", command=root.destroy)
-        button.pack(side=BOTTOM)
-        guidShown = []
-        def get_cont(newstory):
-            if newstory.get_guid() not in guidShown:
-                cont.insert(END, newstory.get_title()+"\n", "title")
-                cont.insert(END, "\n---------------------------------------------------------------\n", "title")
-                cont.insert(END, newstory.get_description())
-                cont.insert(END, "\n*********************************************************************\n", "title")
-                guidShown.append(newstory.get_guid())
+    # Problem 11
+    triggerlist = read_trigger_config('triggers.txt')
 
-        while True:
+    while True:
 
-            print("Polling . . .", end=' ')
-            # Get stories from Google's Top Stories RSS news feed
-            stories = process("http://news.google.com/news?output=rss")
+        print("Polling . . .")
+        # Get stories from Google's Top Stories RSS news feed
+        stories = process("http://news.google.com/news?output=rss")
 
-            # Get stories from Yahoo's Top Stories RSS news feed
-            stories.extend(process("http://news.yahoo.com/rss/topstories"))
+        # Get stories from Yahoo's Top Stories RSS news feed
+        stories.extend(process("http://news.yahoo.com/rss/topstories"))
 
-            stories = filter_stories(stories, triggerlist)
+        stories = filter_stories(stories, triggerlist)
 
-            list(map(get_cont, stories))
-            scrollbar.config(command=cont.yview)
+        for story in stories:
+            print(story, '\n--------------------------------')
 
-
-            print("Sleeping...")
-            time.sleep(SLEEPTIME)
-
-    except Exception as e:
-        print(e)
-
+        print("Sleeping...")
+        time.sleep(SLEEPTIME)
 
 if __name__ == '__main__':
-    root = Tk()
-    root.title("Some RSS parser")
-    t = threading.Thread(target=main_thread, args=(root,))
-    t.start()
-    root.mainloop()
+    main_thread()
 
