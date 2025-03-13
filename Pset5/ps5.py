@@ -318,9 +318,9 @@ class AfterTrigger(TimeTrigger):
 # Problem 7
 class NotTrigger(Trigger):
     """
-    Trigger class which inverts the output of another Trigger object's 'evaluate' method call.
+    Trigger subclass which inverts the output of another Trigger object's 'evaluate' method call.
     
-    Takes one Trigger parameter (trigger). Inherits from Trigger.
+    Takes one Trigger type parameter (trigger). Inherits from Trigger.
     
     trigger: Trigger
     """
@@ -338,10 +338,64 @@ class NotTrigger(Trigger):
         return not self.trigger.evaluate(newsStory)
 
 # Problem 8
-# TODO: AndTrigger
+class AndTrigger(Trigger):
+    """
+    Trigger subclass whose 'evaluate' method call returns True only if all 'evaluate' methods of the Trigger inputs also return True.
+    
+    Takes two or more Trigger type parameters. Inherits from Trigger.
+    
+    trigger: Trigger
+    """
+    def __init__(self, trigger1: Trigger, trigger2: Trigger, *triggers: Trigger):
+        """
+        Calls __init__ method of superclass Trigger.
+        
+        Method takes 2 or more objects of type Trigger, unpacks and assigns all to 'self.triggers'.
+        """
+        super().__init__()
+
+        self.triggers = (trigger1, trigger2, *triggers)
+    
+    def evaluate(self, newsStory: NewsStory):
+        """
+        Compares all Triggers in self.triggers and returns False if any of their .evaluate() calls return False, else returns True.
+        """
+        for index in range(len(self.triggers) - 1):
+            if self.triggers[index].evaluate(newsStory) and self.triggers[index+1].evaluate(newsStory):
+                continue
+            else:
+                return False
+
+        return True
 
 # Problem 9
-# TODO: OrTrigger
+class OrTrigger(Trigger):
+    """
+    Trigger subclass whose 'evaluate' method call returns True if any 'evaluate' methods of the Trigger inputs also return True.
+    
+    Takes two or more Trigger type parameters. Inherits from Trigger.
+    
+    trigger: Trigger
+    """
+    def __init__(self, trigger1: Trigger, trigger2: Trigger, *triggers: Trigger):
+        """
+        Calls __init__ method of superclass Trigger.
+        
+        Method takes 2 or more objects of type Trigger, unpacks and assigns all to 'self.triggers'.
+        """
+        super().__init__()
+
+        self.triggers = (trigger1, trigger2, *triggers)
+    
+    def evaluate(self, newsStory: NewsStory):
+        """
+        Compares all Triggers in self.triggers and returns True if any of their 'evaluate' calls return True, else returns False.
+        """
+        for index in range(len(self.triggers) - 1):
+            if self.triggers[index].evaluate(newsStory) or self.triggers[index+1].evaluate(newsStory):
+                return True
+
+        return False
 
 
 #======================

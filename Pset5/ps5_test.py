@@ -171,7 +171,6 @@ class ProblemSet5(unittest.TestCase):
         self.assertTrue(s2.evaluate(in_a_bit), "AfterTrigger failed to fire on news just after specified time")
         self.assertTrue(s2.evaluate(future), "AfterTrigger failed to fire on news from long ago")
 
-
     def test4NotTrigger(self):
         n = NotTrigger(self.tt)
         b = NewsStory("guid", "title", "description", "link", datetime.now())
@@ -186,12 +185,20 @@ class ProblemSet5(unittest.TestCase):
         yn = AndTrigger(self.tt, self.ft)
         ny = AndTrigger(self.ft, self.tt)
         nn = AndTrigger(self.ft, self.ft2)
+        three1 = AndTrigger(self.tt, self.ft, self.tt2) # my custom Trigger
+        three2 = AndTrigger(self.tt, self.tt, self.tt2) # my custom Trigger
+
         b = NewsStory("guid", "title", "description", "link", datetime.now())
 
         self.assertTrue(yy.evaluate(b), "AND of 'always true' and 'always true' should be true")
         self.assertFalse(yn.evaluate(b), "AND of 'always true' and 'always false' should be false")
         self.assertFalse(ny.evaluate(b), "AND of 'always false' and 'always true' should be false")
         self.assertFalse(nn.evaluate(b), "AND of 'always false' and 'always false' should be false")
+
+        # my custom tests
+
+        self.assertFalse(three1.evaluate(b), "AND of 'always true' and 'always false' and 'always true' should be false")
+        self.assertTrue(three2.evaluate(b), "AND of 'always true' and 'always false' and 'always true' should be false")
 
     def test6OrTrigger(self):
         yy = OrTrigger(self.tt, self.tt2)
